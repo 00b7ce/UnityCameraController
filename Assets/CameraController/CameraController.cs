@@ -9,9 +9,8 @@ public class CameraController : MonoBehaviour
 {
     public GameObject target;
     public string saveDirectory  = "Screenshots";
-    public float rotateSpeed     = 0.5F;
-    public float inputThreashold = 0.1F;
-    public float moveSpeed       = 0.05F;
+    public float rotateSpeed     = 1.0F;
+    public float moveSpeed       = 1.0F;
 
     private bool cameraMode      = true;
 
@@ -51,9 +50,9 @@ public class CameraController : MonoBehaviour
         if (cameraMode) targetCamera();
         else            freeCamera();
         // Apply rotation
-        this.transform.Rotate(new Vector3( Gamepad.current.rightStick.ReadValue().y * rotateSpeed, 
-                                           Gamepad.current.rightStick.ReadValue().x * rotateSpeed,
-                                          (Gamepad.current.leftShoulder.ReadValue() - Gamepad.current.rightShoulder.ReadValue()) * rotateSpeed)
+        this.transform.Rotate(new Vector3( Gamepad.current.rightStick.ReadValue().y * (rotateSpeed * 0.5F), 
+                                           Gamepad.current.rightStick.ReadValue().x * (rotateSpeed * 0.5F),
+                                          (Gamepad.current.leftShoulder.ReadValue() - Gamepad.current.rightShoulder.ReadValue()) * (rotateSpeed * 0.5F))
                              );
 
     }
@@ -66,11 +65,11 @@ public class CameraController : MonoBehaviour
         // Set position
         this.transform.RotateAround(target.transform.position,
                                     new Vector3(0.0F,(Gamepad.current.leftStick.x.ReadValue() * -1), 0.0F),
-                                    360.0F / (1.0F / rotateSpeed) * Time.deltaTime
+                                    360.0F / (0.1F / (moveSpeed * 0.05F)) * Time.deltaTime
                                    );
-        if (Math.Abs(Gamepad.current.leftStick.y.ReadValue()) > inputThreashold) this.transform.Translate(Vector3.up      *  Gamepad.current.leftStick.y.ReadValue() * moveSpeed);
-        if (         Gamepad.current.rightTrigger.ReadValue() > inputThreashold) this.transform.Translate(Vector3.forward * Gamepad.current.rightTrigger.ReadValue() * moveSpeed);
-        if (         Gamepad.current.leftTrigger.ReadValue()  > inputThreashold) this.transform.Translate(Vector3.back    * Gamepad.current.leftTrigger.ReadValue()  * moveSpeed);
+        this.transform.Translate(Vector3.up      *  Gamepad.current.leftStick.y.ReadValue() * (moveSpeed * 0.05F));
+        this.transform.Translate(Vector3.forward * Gamepad.current.rightTrigger.ReadValue() * (moveSpeed * 0.05F));
+        this.transform.Translate(Vector3.back    * Gamepad.current.leftTrigger.ReadValue()  * (moveSpeed * 0.05F));
     }
 
     private void freeCamera()
@@ -80,9 +79,9 @@ public class CameraController : MonoBehaviour
         // Reset rotation
         if (Gamepad.current.rightStickButton.isPressed) this.transform.rotation = startRotation;
         // Set position
-        if (Math.Abs(Gamepad.current.leftStick.x.ReadValue()) > inputThreashold) this.transform.Translate(Vector3.right   * Gamepad.current.leftStick.x.ReadValue()  * moveSpeed);
-        if (Math.Abs(Gamepad.current.leftStick.y.ReadValue()) > inputThreashold) this.transform.Translate(Vector3.up      * Gamepad.current.leftStick.y.ReadValue()  * moveSpeed);
-        if (         Gamepad.current.rightTrigger.ReadValue() > inputThreashold) this.transform.Translate(Vector3.forward * Gamepad.current.rightTrigger.ReadValue() * moveSpeed);
-        if (         Gamepad.current.leftTrigger.ReadValue()  > inputThreashold) this.transform.Translate(Vector3.back    * Gamepad.current.leftTrigger.ReadValue()  * moveSpeed);
+        this.transform.Translate(Vector3.right   * Gamepad.current.leftStick.x.ReadValue()  * (moveSpeed * 0.05F));
+        this.transform.Translate(Vector3.up      * Gamepad.current.leftStick.y.ReadValue()  * (moveSpeed * 0.05F));
+        this.transform.Translate(Vector3.forward * Gamepad.current.rightTrigger.ReadValue() * (moveSpeed * 0.05F));
+        this.transform.Translate(Vector3.back    * Gamepad.current.leftTrigger.ReadValue()  * (moveSpeed * 0.05F));
     }
 }
